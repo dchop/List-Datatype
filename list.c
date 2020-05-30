@@ -14,7 +14,7 @@ static int Head_Stack_counter = LIST_MAX_NUM_HEADS-1;
 
 // Number of nodes used
 static int Number_of_Nodes_used = 0;
-static List *Node_Stack[LIST_MAX_NUM_NODES] = {NULL};
+static Node *Node_Stack[LIST_MAX_NUM_NODES] = {NULL};
 static int Node_Stack_counter = LIST_MAX_NUM_NODES-1;
 
 static bool k = true;
@@ -319,6 +319,7 @@ void* List_last(List* pList){
 // If this operation advances the current item beyond the end of the pList, a NULL pointer 
 // is returned and the current item is set to be beyond end of pList.
 void* List_next(List* pList){
+    // CHECK CASE WHEN LIST IS EMPTY 
     void *returning;
     if(pList->check_if_at_head){
         pList->current = pList->head;
@@ -349,6 +350,7 @@ void* List_next(List* pList){
 // If this operation backs up the current item beyond the start of the pList, a NULL pointer 
 // is returned and the current item is set to be before the start of pList.
 void* List_prev(List* pList){
+    // CHECK CASE WHEN LIST IS EMPTY 
     void *returning;
     if (pList->current == pList->head){
         pList->check_if_at_head = true;
@@ -365,6 +367,7 @@ void* List_prev(List* pList){
         pList->check_if_at_tail = false;
         return temp->value;
     }
+    else{
     Node* temp2 = pList->current;
     Node* checker = pList->head;
     printf("343 data inside ListLast = %d\n", *(int*)(checker->value));
@@ -373,15 +376,14 @@ void* List_prev(List* pList){
     temp2 = pList->current;
     printf("252 data inside ListLast = %d\n", *(int*)(temp2->value));
     return temp2->value;
-    //If current is the head then Create a new node thats NULL and set the previous of head to that and the next of the node to the head
+    }
 }
-
 // Returns a pointer to the current item in pList.
 // Returns NULL if current is before the start of the pList, or after the end of the pList.
 void* List_curr(List* pList){
     if (pList->check_if_at_head || pList->check_if_at_tail){
-        void* returning;
-        return returning;
+        // void* returning = NULL
+        return NULL;
     }
     else{
     Node* temp = pList->current;
@@ -393,18 +395,23 @@ void* List_curr(List* pList){
 // pList2 no longer exists after the operation; its head is available
 // for future operations.
 void List_concat(List* pList1, List* pList2){
-    if (Number_of_Nodes_used > LIST_MAX_NUM_NODES - 1){
-        return;
-    }
+    // if (Number_of_Nodes_used >= LIST_MAX_NUM_NODES){
+    //     return;
+    // }
     if(pList1->head == NULL && pList2->head == NULL){
+        //merge list2 in one and put list2's head back into the stack
+        //current pointer is null
         return;
     }
     else if(pList1->head == NULL && pList2->head != NULL){
         pList1->head = pList2->head;
         pList1->tail = pList2->tail;
+        //now put list2's head back into the stack
+        //current pointer is list1's current pointer
     }
     else if(pList1->head != NULL && pList2->head == NULL){
-
+        //put list2's head back into the stack 
+        //current pointer is list1's current pointer
     }
     else{
         Node* temp = pList1->tail;
@@ -428,11 +435,14 @@ void List_concat(List* pList1, List* pList2){
 // If the current pointer is before the start of the pList, or beyond the end of the pList,
 // then do not change the pList and return NULL.
 void* List_remove(List* pList){
-    if(pList->check_if_at_head == true || pList->check_if_at_tail){
+    if(pList->check_if_at_head == true || pList->check_if_at_tail == true){
         return NULL;
     }
     Node* returning;
     Node* temp = pList->current;
+
+    //Implement the case when there is only one node in the list 
+
     // if(pList->current == pList->head && pList->number_of_nodes == 1){
     //         // Node* node_available = temp;
     //         temp->next = NULL;
