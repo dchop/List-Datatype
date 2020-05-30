@@ -21,7 +21,6 @@ static int Node_Stack_counter = LIST_MAX_NUM_NODES-1;
 static bool k = true;
 
 List* List_create(){
-    printf("THE LENGTH IS: %d\n", sizeof(Arr));
     if(Number_of_Heads_used >= LIST_MAX_NUM_HEADS){
         return NULL;
     }
