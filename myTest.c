@@ -51,9 +51,38 @@
 //     List* pList1 = List_create();
 //     int added = 41;
 //     CHECK(List_add(pList1, &added) == 0);
+//     int three = 3;
+//     CHECK(List_insert(pList1, &three) == 0);
+//     CHECK(List_next(pList1) == &added);
+//     CHECK(List_next(pList1) == NULL);
+
+//     List_free(pList1, complexTestFreeFn);
+//     CHECK(complexTestFreeCounter == 2);
+
+//     List* pList2 = List_create();
+//     int five = 4;
+//     CHECK(List_append(pList2, &five) == 0);
+
+//     List_free(pList1, complexTestFreeFn);
+//     CHECK(complexTestFreeCounter == 2);
+
+//     // List* pList2 = List_create();
+//     // int four = 4;
+//     // CHECK(List_append(pList2, &four) == 0);
+//     List_concat(pList1, pList2);
+//     CHECK(List_count(pList1) == 3);
+//     List_print1(pList1);
+//     CHECK(List_curr(pList1) == NULL);
+//     // CHECK(List_prev(pList1) == &four);
+
+//     List* pList3 = List_create();
+
+//     // CHECK(List_add(pList1, &added) == 0);
 //     CHECK(List_add(pList1, &added) == 0);
 //     CHECK(List_add(pList1, &added) == 0);
-//     CHECK(List_add(pList1, &added) == 0);
+
+//     // int three = 3;
+//     // CHECK(List_add(pList1, &three) == 0);
 //     CHECK(List_add(pList1, &added) == 0);
 //     CHECK(List_add(pList1, &added) == 0);
 //     CHECK(List_add(pList1, &added) == 0);

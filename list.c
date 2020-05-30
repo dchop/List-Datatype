@@ -14,6 +14,7 @@ static int Head_Stack_counter = LIST_MAX_NUM_HEADS-1;
 
 // Number of nodes used
 static int Number_of_Nodes_used = 0;
+
 static Node *Node_Stack[LIST_MAX_NUM_NODES] = {NULL};
 static int Node_Stack_counter = LIST_MAX_NUM_NODES-1;
 
@@ -319,9 +320,13 @@ void* List_last(List* pList){
 // If this operation advances the current item beyond the end of the pList, a NULL pointer 
 // is returned and the current item is set to be beyond end of pList.
 void* List_next(List* pList){
-    // CHECK CASE WHEN LIST IS EMPTY 
     void *returning;
-    if(pList->check_if_at_head){
+    if(pList->current == pList->head && pList->head == NULL){
+        Node* temp = pList->head;
+        temp->value = NULL;
+        return NULL;
+    }
+    else if(pList->check_if_at_head){
         pList->current = pList->head;
         Node* temp = pList->current;
         pList->check_if_at_head = false;
@@ -350,9 +355,13 @@ void* List_next(List* pList){
 // If this operation backs up the current item beyond the start of the pList, a NULL pointer 
 // is returned and the current item is set to be before the start of pList.
 void* List_prev(List* pList){
-    // CHECK CASE WHEN LIST IS EMPTY 
     void *returning;
-    if (pList->current == pList->head){
+    if(pList->current == pList->head && pList->head == NULL){
+        Node* temp = pList->head;
+        temp->value = NULL;
+        return NULL;
+    }
+    else if (pList->current == pList->head){
         pList->check_if_at_head = true;
         returning = NULL;
         return returning;
@@ -401,7 +410,6 @@ void List_concat(List* pList1, List* pList2){
     if(pList1->head == NULL && pList2->head == NULL){
         //merge list2 in one and put list2's head back into the stack
         //current pointer is null
-        return;
     }
     else if(pList1->head == NULL && pList2->head != NULL){
         pList1->head = pList2->head;
@@ -441,6 +449,11 @@ void* List_remove(List* pList){
     Node* returning;
     Node* temp = pList->current;
 
+    if(pList->number_of_nodes == 1){
+        pList->head = NULL;
+        pList->tail = NULL;
+    }
+
     //Implement the case when there is only one node in the list 
 
     // if(pList->current == pList->head && pList->number_of_nodes == 1){
@@ -464,7 +477,7 @@ void* List_remove(List* pList){
     //         return returning; 
 
     // }
-    if (pList->current == pList->head) {
+    else if (pList->current == pList->head) {
         pList->head = temp->next;
         Node* temp1 = pList->head;
         temp1->previous = NULL;
@@ -551,6 +564,9 @@ void* List_search(List* pList, COMPARATOR_FN pComparator, void* pComparisonArg){
 // available for future operations.
 
 void List_free(List* pList, FREE_FN pItemFreeFn){
+    if(Head_Stack_counter == 9){
+        return;
+    }
     if(pList->head == NULL && pList->current == NULL && pList->tail == NULL && pList->number_of_nodes == 0){
         pList->head = NULL;
         pList->current = NULL;
@@ -561,6 +577,8 @@ void List_free(List* pList, FREE_FN pItemFreeFn){
         Head_Stack[Head_Stack_counter] = pList;
         return;
     }
+    pList->check_if_at_head = false;
+    pList->check_if_at_tail = false;
     pList->current = pList->head;
     Node* temp;
     while(pList->current){
