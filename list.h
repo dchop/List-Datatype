@@ -15,7 +15,8 @@ struct Node_s {
     struct Node_s* previous;
 };
 
-typedef struct {
+typedef struct List_s List;
+struct List_s {
     // TODO: You should change this!
     void* head;
     void* current;
@@ -23,7 +24,8 @@ typedef struct {
     int number_of_nodes;
     bool check_if_at_head;
     bool check_if_at_tail;
-} List;
+    struct List_s* next;
+};
 
 // Maximum number of unique lists the system can support
 // (You may modify its value for your needs)

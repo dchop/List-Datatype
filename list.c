@@ -7,53 +7,64 @@ static List Arr[LIST_MAX_NUM_HEADS] = {NULL};
 static Node Nodes[LIST_MAX_NUM_NODES] = {NULL};
 
 // Number of heads used
-static int Number_of_Heads_used = 0;
-
-static List *Head_Stack[LIST_MAX_NUM_HEADS] = {NULL};
-static int Head_Stack_counter = LIST_MAX_NUM_HEADS-1;
+static int Head_Index= 0;
+// static List *Head_Stack[LIST_MAX_NUM_HEADS] = {NULL};
+static int Head_List_counter = 0;
+static List* HeadsList = NULL;
 
 // Number of nodes used
-static int Number_of_Nodes_used = 0;
+static int Node_Index = 0;
+// static Node *Node_Stack[LIST_MAX_NUM_NODES] = {NULL};
+static int Node_List_counter = 0;
+static Node* NodesList = NULL;
 
-static Node *Node_Stack[LIST_MAX_NUM_NODES] = {NULL};
-static int Node_Stack_counter = LIST_MAX_NUM_NODES-1;
+static void* HeadList_Pop();
+static void HeadList_Push(void* pItem);
+
+static void* NodesList_Pop();
+static void NodesList_Push(void* pItem);
 
 static bool k = true;
 
 List* List_create(){
-    if(Number_of_Heads_used >= LIST_MAX_NUM_HEADS){
-        return NULL;
-    }
-
     if (k){
     for(int i=0; i <= LIST_MAX_NUM_HEADS-1; i++){
-        List *New = &(Arr[i]); // Putting the address of the element to New
+        // List *New = &(Arr[i]); // Putting the address of the element to New
         Arr[i].head = NULL;
         Arr[i].current = NULL;
         Arr[i].tail = NULL;
         Arr[i].number_of_nodes = 0;
         // printf("31 %p\n", New);
-        Head_Stack[i] = New;
+        // Head_Stack[i] = New;
     }
 
     for(int j=0; j <= LIST_MAX_NUM_NODES-1; j++){
-        List *New1 = &(Nodes[j]);
+        // List *New1 = &(Nodes[j]);
         Nodes[j].value = 0;
         Nodes[j].next = NULL;
         Nodes[j].previous = NULL;
-        Node_Stack[j] = New1;
+        // Node_Stack[j] = New1;
     }
     k = false;
     }
+    List* K;
+    if (Head_Index >= LIST_MAX_NUM_NODES){
+        if(Head_List_counter == 0){
+            return NULL;
+        }
+        K = HeadList_Pop();
+    }
+    else{
+        K = &(Arr[Head_Index]);
+        Node_Index++;
+    }
 
-    printf("49 %d\n", Head_Stack_counter);
-    printf("50 %p\n", (Head_Stack[Head_Stack_counter]));
-    List *K = (Head_Stack[Head_Stack_counter]);
+    printf("49 %d\n", Head_Index);
+    printf("50 %p\n", &(Arr[Head_Index]));
     // Arr[Number_of_Heads_used] = *K;
-    Number_of_Heads_used++;
-    Head_Stack[Head_Stack_counter] = NULL;
-    Head_Stack_counter--;
+    // Head_Stack[Head_Stack_counter] = NULL;
     return K;
+
 
     
     // if(numSpareLists){
@@ -88,6 +99,9 @@ List* List_create(){
 
 // Returns the number of items in pList.
 int List_count(List* pList){
+    if(pList->head == NULL){
+        return NULL;
+    }
     printf("90 Number of nodes %d\n", pList->number_of_nodes);
     return pList->number_of_nodes;
 }
@@ -95,12 +109,19 @@ int List_count(List* pList){
 // Adds item to the end of pList, and makes the new item the current one. 
 // Returns 0 on success, -1 on failure.
 int List_append(List* pList, void* pItem){
-    if (Number_of_Nodes_used >= LIST_MAX_NUM_NODES){
-        return -1;
+    Node* new;
+    if (Node_Index >= LIST_MAX_NUM_NODES){
+        if(Node_List_counter == 0){
+            return -1;
+        }
+        new = NodesList_Pop();
+    }
+    else{
+        new = &(Nodes[Node_Index]);
+        Node_Index++;
     }
     printf("Number of nodes in list %d\n", pList->number_of_nodes);
-    printf("Node Stack counter %d\n", Node_Stack_counter);
-    Node *new = (Node_Stack[Node_Stack_counter]);
+    printf("Node Stack counter %d\n", Node_Index);
     new->value = pItem;
     printf("%d\n ", *(int *)(new->value));
     if(pList->head == NULL){
@@ -117,22 +138,90 @@ int List_append(List* pList, void* pItem){
     }
     Node *checker = pList->head;
     printf("data = %d\n", *((int *)(checker->value)));
-    Node_Stack[Node_Stack_counter] = NULL;
+    // Node_Stack[Node_Stack_counter] = NULL;
     pList->number_of_nodes++;
-    Number_of_Nodes_used++;
-    Node_Stack_counter--;
+    // Node_Stack_counter--;
     return 0;
+}
+
+void printNodesList(Node* List) {
+    // Node *pNode = pList->head;
+    // printf("head is", *((int*)(pNode->value)));
+    while(List != NULL) {
+        printf("%d->", *((int*)(List->value)));
+        List = List->next;
+    }
+    printf("\n");
+}
+
+static void NodesList_Push(void* pItem){
+    Node* temp = pItem;
+    if(NodesList == NULL){
+        temp->next = NULL;
+        temp->previous = NULL;
+        NodesList = temp;
+    }
+    else{
+        temp->next = NodesList;
+        temp->previous = NULL;
+        NodesList = temp;
+    }
+    Node_List_counter++;
+    return;
+}
+
+static void* NodesList_Pop(){
+    if(NodesList != NULL){
+        Node* temp = NodesList;
+        NodesList = temp->next;
+        Node_List_counter--;
+        return temp;
+    }
+    else{
+    return NULL;
+    }
+}
+
+static void HeadList_Push(void* pItem){
+    List* temp = pItem;
+    if(HeadsList == NULL){
+        temp->next = NULL;
+        HeadsList = temp;
+    }
+    else{
+        temp->next = HeadsList;
+        HeadsList = temp;
+    }
+    Head_List_counter++;
+    return;
+}
+
+static void* HeadList_Pop(){
+    if(HeadsList != NULL){
+        Node* temp = HeadsList;
+        HeadsList = temp->next;
+        Head_List_counter--;
+        return temp;
+    }
 }
 
 // Adds item to the front of pList, and makes the new item the current one. 
 // Returns 0 on success, -1 on failure.
 int List_prepend(List* pList, void* pItem){
-    if (Number_of_Nodes_used >= LIST_MAX_NUM_NODES){
-        return -1;
+    Node* new;
+    // printNodesList(NodesList);
+    if (Node_Index >= LIST_MAX_NUM_NODES){
+        if(Node_List_counter == 0){
+            return -1;
+        }
+        new = NodesList_Pop();
+    }
+    else{
+        new = &(Nodes[Node_Index]);
+        Node_Index++;
     }
     printf("Number of nodes in list %d\n", pList->number_of_nodes);
-    printf("Node Stack counter %d\n", Node_Stack_counter);
-    Node *new = (Node_Stack[Node_Stack_counter]);
+    printf("Node Stack counter %d\n", Node_Index);
     new->value = pItem;
     printf("%d\n ", *(int *) (new->value));
     if(pList->head == NULL){
@@ -149,10 +238,9 @@ int List_prepend(List* pList, void* pItem){
     }
     Node *checker = pList->head;
     printf("data = %d\n", *((int *)(checker->value)));
-    Node_Stack[Node_Stack_counter] = NULL;
+    // Node_Stack[Node_Stack_counter] = NULL;
     pList->number_of_nodes++;
-    Number_of_Nodes_used++;
-    Node_Stack_counter--;
+    // Node_Stack_counter--;
     return 0;
 }
 
@@ -161,14 +249,21 @@ int List_prepend(List* pList, void* pItem){
 // If the current pointer is beyond the end of the pList, the item is added at the end. 
 // Returns 0 on success, -1 on failure.
 int List_insert(List* pList, void* pItem){
-    if (Number_of_Nodes_used >= LIST_MAX_NUM_NODES){
-        return -1;
+    Node* new;
+    if (Node_Index >= LIST_MAX_NUM_NODES){
+        if(Node_List_counter == 0){
+            return -1;
+        }
+        new = NodesList_Pop();
+    }
+    else{
+        new = &(Nodes[Node_Index]);
+        Node_Index++;
     }
     printf("Number of nodes in list %d\n", pList->number_of_nodes);
-    printf("Node Stack counter %d\n", Node_Stack_counter);
-    Node *new = (Node_Stack[Node_Stack_counter]);
+    printf("Node Stack counter %d\n", Node_Index);
     new->value = pItem;
-    printf("%d\n ", *(int *) (new->value));
+    printf("%d\n ", *(int *)(new->value));
     if(pList->head == NULL){
         pList->head = new;
         pList->tail = new;
@@ -216,10 +311,10 @@ int List_insert(List* pList, void* pItem){
     }
     // Node *checker = pList->head;
     // printf("data = %d\n", *((int *)(checker->value)));
-    Node_Stack[Node_Stack_counter] = NULL;
+    // Node_Stack[Node_Stack_counter] = NULL;
     pList->number_of_nodes++;
-    Number_of_Nodes_used++;
-    Node_Stack_counter--;
+    // Number_of_Nodes_used++;
+    // Node_Stack_counter--;
     return 0;
 }
 
@@ -228,14 +323,21 @@ int List_insert(List* pList, void* pItem){
 // the current pointer is beyond the end of the pList, the item is added at the end. 
 // Returns 0 on success, -1 on failure.
 int List_add(List* pList, void* pItem){
-    if (Number_of_Nodes_used >= LIST_MAX_NUM_NODES){
-        return -1;
+    Node* new;
+    if (Node_Index >= LIST_MAX_NUM_NODES){
+        if(Node_List_counter == 0){
+            return -1;
+        }
+        new = NodesList_Pop();
     }
-    // printf("Number of nodes in list %d\n", pList->number_of_nodes);
-    printf("Node Stack counter %d\n", Node_Stack_counter);
-    Node *new = (Node_Stack[Node_Stack_counter]);
+    else{
+        new = &(Nodes[Node_Index]);
+        Node_Index++;
+    }
+    printf("Number of nodes in list %d\n", pList->number_of_nodes);
+    printf("Node Stack counter %d\n", Node_Index);
     new->value = pItem;
-    printf("%d\n ", *(int *) (new->value));
+    printf("%d\n ", *(int *)(new->value));
     if(pList->head == NULL){
         pList->head = new;
         pList->tail = new;
@@ -276,10 +378,10 @@ int List_add(List* pList, void* pItem){
    
     // Node *checker = pList->head;
     // printf("data = %d\n", *((int *)(checker->value)));
-    Node_Stack[Node_Stack_counter] = NULL;
+    // Node_Stack[Node_Stack_counter] = NULL;
     pList->number_of_nodes++;
-    Number_of_Nodes_used++;
-    Node_Stack_counter--;
+    // Number_of_Nodes_used++;
+    // Node_Stack_counter--;
     return 0;
 }
 
@@ -386,10 +488,11 @@ void* List_prev(List* pList){
     return temp2->value;
     }
 }
+
 // Returns a pointer to the current item in pList.
 // Returns NULL if current is before the start of the pList, or after the end of the pList.
 void* List_curr(List* pList){
-    if (pList->check_if_at_head || pList->check_if_at_tail){
+    if (pList->check_if_at_head || pList->check_if_at_tail || pList->head == NULL){
         // void* returning = NULL
         return NULL;
     }
@@ -433,21 +536,22 @@ void List_concat(List* pList1, List* pList2){
     pList2->current = NULL;
     pList2->tail = NULL;
     pList2->number_of_nodes = 0;
-    Head_Stack_counter++;
-    Number_of_Heads_used--;
-    Head_Stack[Head_Stack_counter] = pList2;
+    HeadList_Push(pList2);
+    // Head_Stack_counter++;
+    // Number_of_Heads_used--;
+    // Head_Stack[Head_Stack_counter] = pList2;
 }
 
 // Return current item and take it out of pList. Make the next item the current one.
 // If the current pointer is before the start of the pList, or beyond the end of the pList,
 // then do not change the pList and return NULL.
 void* List_remove(List* pList){
-    if(pList->check_if_at_head == true || pList->check_if_at_tail == true){
+    if(pList->check_if_at_head == true || pList->check_if_at_tail == true || pList->head == NULL){
         return NULL;
     }
-    Node* returning;
-    Node* temp = pList->current;
 
+    Node* temp = pList->current;
+    
     if(pList->number_of_nodes == 1){
         pList->head = NULL;
         pList->tail = NULL;
@@ -480,7 +584,7 @@ void* List_remove(List* pList){
         pList->head = temp->next;
         Node* temp1 = pList->head;
         temp1->previous = NULL;
-        returning = temp->value;
+        // returning = temp->value;
         // Node* temp = pList->current;
         // returning = temp->value;
         // printf("yoooo", *((int*)(returning)));
@@ -496,12 +600,13 @@ void* List_remove(List* pList){
         pList->tail = temp->previous;
         Node* temp1 = pList->tail;
         temp1->next = NULL;
-        returning = temp->value;
+        // returning = temp->value;
+        pList->check_if_at_tail = true;
         pList->current = pList->tail;
     }
     else {
         Node* toReturn = pList->current;
-        returning = toReturn->value;
+        // returning = toReturn->value;
         Node* temp = pList->current;
         Node* temp1 = temp->previous;
         temp1->next = temp->next;
@@ -510,15 +615,17 @@ void* List_remove(List* pList){
         pList->current = temp2;
     }
     // Node* node_available = temp;
-    temp->next = NULL;
-    temp->previous = NULL;
-    temp->value = 0;
-    Node_Stack_counter++;
-    Number_of_Nodes_used--;
+    // temp->next = NULL;
+    // temp->previous = NULL;
+    // temp->value = 0;
+    NodesList_Push(temp);
+    // Node_Stack_counter++;
+    // Number_of_Nodes_used--;
     pList->number_of_nodes--;
-    Node_Stack[Node_Stack_counter] = temp;
-    return returning;  
+    // Node_Stack[Node_Stack_counter] = temp;
+    return temp->value;  
 }
+
 // Return last item and take it out of pList. Make the new last item the current one.
 // Return NULL if pList is initially empty.
 void* List_trim(List* pList){
@@ -528,6 +635,7 @@ void* List_trim(List* pList){
     pList->current = pList->tail;
     return List_remove(pList);
 }
+
 // Search pList, starting at the current item, until the end is reached or a match is found. 
 // In this context, a match is determined by the comparator parameter. This parameter is a
 // pointer to a routine that takes as its first argument an item pointer, and as its second 
@@ -563,17 +671,18 @@ void* List_search(List* pList, COMPARATOR_FN pComparator, void* pComparisonArg){
 // available for future operations.
 
 void List_free(List* pList, FREE_FN pItemFreeFn){
-    if(Head_Stack_counter == 9){
-        return;
-    }
+    // if(Head_Stack_counter == 9){
+    //     return;
+    // }
     if(pList->head == NULL && pList->current == NULL && pList->tail == NULL && pList->number_of_nodes == 0){
         pList->head = NULL;
         pList->current = NULL;
         pList->tail = NULL;
         pList->number_of_nodes = 0;
-        Head_Stack_counter++;
-        Number_of_Heads_used--;
-        Head_Stack[Head_Stack_counter] = pList;
+        HeadList_Push(pList);
+        // Head_Stack_counter++;
+        // Number_of_Heads_used--;
+        // Head_Stack[Head_Stack_counter] = pList;
         return;
     }
     pList->check_if_at_head = false;
@@ -594,63 +703,65 @@ void List_free(List* pList, FREE_FN pItemFreeFn){
     temp->next = NULL;
     temp->previous = NULL;
     temp->value = 0;
-    Node_Stack_counter++;
-    Number_of_Nodes_used--;
-    pList->number_of_nodes--;
-    Node_Stack[Node_Stack_counter] = temp;
+    NodesList_Push(temp);
+    // Node_Stack_counter++;
+    // Number_of_Nodes_used--;
+    // pList->number_of_nodes--;
+    // Node_Stack[Node_Stack_counter] = temp;
 
     // List* head_available = pList;
     pList->head = NULL;
     pList->current = NULL;
     pList->tail = NULL;
     pList->number_of_nodes = 0;
-    Head_Stack_counter++;
-    Number_of_Heads_used--;
-    Head_Stack[Head_Stack_counter] = pList;
+    HeadList_Push(pList);
+    // Head_Stack_counter++;
+    // Number_of_Heads_used--;
+    // Head_Stack[Head_Stack_counter] = pList;
     
 };
 
 
-void List_print(List* pList) {
-    Node *pNode = pList->head;
-    while(pNode != NULL) {
-        printf("%d->", *((int*)(pNode->value)));
-        pNode = pNode->next;
-    }
-    printf("\n");
-}
-void printStates(List* pList) {
-    Node* curr = pList->current;
-    Node* head = pList->head;
-    Node* last = pList->tail;
-    int size = pList->number_of_nodes;
+// void List_print(List* pList) {
+//     Node *pNode = pList->head;
+//     while(pNode != NULL) {
+//         printf("%d->", *((int*)(pNode->value)));
+//         pNode = pNode->next;
+//     }
+//     printf("\n");
+// }
+// void printStates(List* pList) {
+//     Node* curr = pList->current;
+//     Node* head = pList->head;
+//     Node* last = pList->tail;
+//     int size = pList->number_of_nodes;
 
-    head == NULL?printf("NULL\n"):
-                printf("Head:  %d      ", *((int*)(head->value)));
-    head->next == NULL?printf("NULL         "):
-                printf("Head_next: %d      ", *((int*)(head->next->value)));
-    head->previous == NULL?printf("NULL\n"):
-                printf("Head_prev: %d\n", *((int*)(head->previous->value)));
+//     head == NULL?printf("NULL\n"):
+//                 printf("Head:  %d      ", *((int*)(head->value)));
+//     head->next == NULL?printf("NULL         "):
+//                 printf("Head_next: %d      ", *((int*)(head->next->value)));
+//     head->previous == NULL?printf("NULL\n"):
+//                 printf("Head_prev: %d\n", *((int*)(head->previous->value)));
 
-    last == NULL?printf("NULL\n"):
-                printf("Last:  %d      ", *((int*)(last->value)));
-    last->next == NULL?printf("NULL              "):
-                printf("Last_next: %d      ", *((int*)(last->next->value)));
-    last->previous == NULL?printf("NULL\n"):
-                printf("last_prev: %d\n", *((int*)(last->previous->value)));
+//     last == NULL?printf("NULL\n"):
+//                 printf("Last:  %d      ", *((int*)(last->value)));
+//     last->next == NULL?printf("NULL              "):
+//                 printf("Last_next: %d      ", *((int*)(last->next->value)));
+//     last->previous == NULL?printf("NULL\n"):
+//                 printf("last_prev: %d\n", *((int*)(last->previous->value)));
 
-    if (curr != NULL) {
-        curr == NULL?printf("NULL\n"):
-                    printf("Curr:  %d      ", *((int*)(curr->value)));
-        curr->next == NULL?printf("NULL              "):
-                    printf("Curr_next: %d      ", *((int*)(curr->next->value)));
-        curr->previous == NULL?printf("NULL\n"):
-                    printf("Curr_prev: %d\n", *((int*)(curr->previous->value)));
-    }
+//     if (curr != NULL) {
+//         curr == NULL?printf("NULL\n"):
+//                     printf("Curr:  %d      ", *((int*)(curr->value)));
+//         curr->next == NULL?printf("NULL              "):
+//                     printf("Curr_next: %d      ", *((int*)(curr->next->value)));
+//         curr->previous == NULL?printf("NULL\n"):
+//                     printf("Curr_prev: %d\n", *((int*)(curr->previous->value)));
+//     }
     
-    printf("Size:  %d\n", size);
-    printf("\n");
-}
+//     printf("Size:  %d\n", size);
+//     printf("\n");
+// }
 
 // int main() {
 //     printf("hi\n");
