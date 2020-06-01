@@ -7,6 +7,7 @@
 #include <stdbool.h>
 
 
+
 typedef struct Node_s Node;
 struct Node_s {
     // TODO: You should change this!
