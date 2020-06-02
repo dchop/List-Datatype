@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
-static List Arr[LIST_MAX_NUM_HEADS] = {NULL};
-static Node Nodes[LIST_MAX_NUM_NODES] = {NULL};
+static List Arr[LIST_MAX_NUM_HEADS];
+static Node Nodes[LIST_MAX_NUM_NODES];
 
 // Number of heads used
 static int Head_Index= 0;
@@ -32,6 +32,8 @@ List* List_create(){
         Arr[i].head = NULL;
         Arr[i].current = NULL;
         Arr[i].tail = NULL;
+        Arr[i].check_if_at_head = false;
+        Arr[i].check_if_at_tail = false;
         Arr[i].number_of_nodes = 0;
     }
 
@@ -43,15 +45,15 @@ List* List_create(){
     k = false;
     }
     List* K;
-    if (Head_Index >= LIST_MAX_NUM_NODES){
+    if (Head_Index < LIST_MAX_NUM_HEADS){
+        K = &(Arr[Head_Index]);
+        Head_Index++;
+    }
+    else{
         if(Head_List_counter == 0){
             return NULL;
         }
         K = HeadList_Pop();
-    }
-    else{
-        K = &(Arr[Head_Index]);
-        Head_Index++;
     }
 
     printf("Head Index in the Head Array is: %d\n", Head_Index);
@@ -258,7 +260,7 @@ int List_add(List* pList, void* pItem){
 void* List_first(List* pList){
     if(pList->head == NULL){
         Node* temp = pList->head;
-        temp->value = NULL;
+        // temp->value = NULL;
         return NULL;
     }
     if(pList->check_if_at_head){
@@ -274,7 +276,7 @@ void* List_first(List* pList){
 void* List_last(List* pList){
     if(pList->head == NULL){
         Node* temp = pList->head;
-        temp->value = NULL;
+        // temp->value = NULL;
         return NULL;
     }
     if(pList->check_if_at_tail){
@@ -292,7 +294,7 @@ void* List_next(List* pList){
     void *returning;
     if(pList->current == pList->head && pList->head == NULL){
         Node* temp = pList->head;
-        temp->value = NULL;
+        // temp->value = NULL;
         returning = NULL;
         return returning;
     }
@@ -328,7 +330,7 @@ void* List_prev(List* pList){
     void *returning;
     if(pList->current == pList->head && pList->head == NULL){
         Node* temp = pList->head;
-        temp->value = NULL;
+        // temp->value = NULL;
         returning = NULL;
         return returning;
     }
@@ -502,6 +504,9 @@ void* List_search(List* pList, COMPARATOR_FN pComparator, void* pComparisonArg){
 // available for future operations.
 
 void List_free(List* pList, FREE_FN pItemFreeFn){
+    if(pList == NULL){
+        return;
+    }
     if(pList->head == NULL && pList->current == NULL && pList->tail == NULL && pList->number_of_nodes == 0){
         pList->head = NULL;
         pList->current = NULL;
@@ -569,6 +574,9 @@ static void* NodesList_Pop(){
     if(NodesList != NULL){
         Node* temp = NodesList;
         NodesList = temp->next;
+        temp->next = NULL;
+        temp->previous = NULL;
+        temp->value = 0;
         Node_List_counter--;
         return temp;
     }
@@ -593,8 +601,14 @@ static void HeadList_Push(void* pItem){
 
 static void* HeadList_Pop(){
     if(HeadsList != NULL){
-        Node* temp = HeadsList;
+        List* temp = HeadsList;
         HeadsList = temp->next;
+        temp->current = NULL;
+        temp->head = NULL;
+        temp->tail = NULL;
+        temp->check_if_at_head = false;
+        temp->check_if_at_tail = false;
+        temp->number_of_nodes = 0;
         Head_List_counter--;
         return temp;
     }
