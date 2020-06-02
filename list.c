@@ -24,10 +24,10 @@ void printNodesList(Node* List);
 static void* NodesList_Pop();
 static void NodesList_Push(void* pItem);
 
-static bool k = true;
+static bool FirstTime_ListCreate = true;
 
 List* List_create(){
-    if (k){
+    if (FirstTime_ListCreate){
     for(int i=0; i <= LIST_MAX_NUM_HEADS-1; i++){
         Arr[i].head = NULL;
         Arr[i].current = NULL;
@@ -42,7 +42,7 @@ List* List_create(){
         Nodes[j].next = NULL;
         Nodes[j].previous = NULL;
     }
-    k = false;
+    FirstTime_ListCreate = false;
     }
     List* K;
     if (Head_Index < LIST_MAX_NUM_HEADS){
