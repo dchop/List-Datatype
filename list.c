@@ -63,16 +63,26 @@ List* List_create(){
 
 // Returns the number of items in pList.
 int List_count(List* pList){
-    if(pList->head == NULL){
-        return NULL;
-    }
+    // assert(pList->number_of_nodes >= 0);
+    // assert(pList != NULL);
+    // if(pList == NULL){
+    //     exit();
+    // }
+    if(pList->number_of_nodes >=0 && pList != NULL){
     printf("Number of nodes in the list %d\n", pList->number_of_nodes);
     return pList->number_of_nodes;
+    }
+    else{
+        return -1;
+    }
 }
 
 // Adds item to the end of pList, and makes the new item the current one. 
 // Returns 0 on success, -1 on failure.
 int List_append(List* pList, void* pItem){
+    if(pList->number_of_nodes < 0){
+        return -1;
+    }
     Node* new;
     if (Node_Index >= LIST_MAX_NUM_NODES){
         if(Node_List_counter == 0){
@@ -105,6 +115,9 @@ int List_append(List* pList, void* pItem){
 // Adds item to the front of pList, and makes the new item the current one. 
 // Returns 0 on success, -1 on failure.
 int List_prepend(List* pList, void* pItem){
+    if(pList->number_of_nodes < 0){
+        return -1;
+    }
     Node* new;
     if (Node_Index >= LIST_MAX_NUM_NODES){
         if(Node_List_counter == 0){
@@ -140,6 +153,9 @@ int List_prepend(List* pList, void* pItem){
 // If the current pointer is beyond the end of the pList, the item is added at the end. 
 // Returns 0 on success, -1 on failure.
 int List_insert(List* pList, void* pItem){
+    if(pList->number_of_nodes < 0){
+        return -1;
+    }
     Node* new;
     if (Node_Index >= LIST_MAX_NUM_NODES){
         if(Node_List_counter == 0){
@@ -200,6 +216,9 @@ int List_insert(List* pList, void* pItem){
 // the current pointer is beyond the end of the pList, the item is added at the end. 
 // Returns 0 on success, -1 on failure.
 int List_add(List* pList, void* pItem){
+    if(pList->number_of_nodes < 0){
+        return -1;
+    }
     Node* new;
     if (Node_Index >= LIST_MAX_NUM_NODES){
         if(Node_List_counter == 0){
@@ -258,6 +277,9 @@ int List_add(List* pList, void* pItem){
 // Returns a pointer to the first item in pList and makes the first item the current item.
 // Returns NULL and sets current item to NULL if list is empty.
 void* List_first(List* pList){
+    if(pList->number_of_nodes < 0){
+        return -1;
+    }
     if(pList->head == NULL){
         Node* temp = pList->head;
         // temp->value = NULL;
@@ -376,6 +398,9 @@ void* List_curr(List* pList){
 // pList2 no longer exists after the operation; its head is available
 // for future operations.
 void List_concat(List* pList1, List* pList2){
+    if (pList2->number_of_nodes < 0){
+        return;
+    }
     if(pList1->head == NULL && pList2->head == NULL){
         //merge list2 in one and put list2's head back into the stack
         //current pointer is null
@@ -404,7 +429,7 @@ void List_concat(List* pList1, List* pList2){
     pList2->tail = NULL;
     pList2->check_if_at_head = false;
     pList2->check_if_at_tail = false;
-    pList2->number_of_nodes = 0;
+    pList2->number_of_nodes = -1;
     HeadList_Push(pList2);
 }
 
@@ -507,13 +532,22 @@ void List_free(List* pList, FREE_FN pItemFreeFn){
     if(pList == NULL){
         return;
     }
+    if(pList->number_of_nodes < 0){
+        return;
+    }
+    // if(Head_Index==10 && Head_List_counter == 9){
+    //     return;
+    // }
+    if(pList->head == NULL && pList == HeadsList){
+        return;
+    }
     if(pList->head == NULL && pList->current == NULL && pList->tail == NULL && pList->number_of_nodes == 0){
         pList->head = NULL;
         pList->current = NULL;
         pList->tail = NULL;
         pList->check_if_at_head = false;
         pList->check_if_at_tail = false;
-        pList->number_of_nodes = 0;
+        pList->number_of_nodes = -1;
         HeadList_Push(pList);
         return;
     }
@@ -540,7 +574,7 @@ void List_free(List* pList, FREE_FN pItemFreeFn){
     pList->head = NULL;
     pList->current = NULL;
     pList->tail = NULL;
-    pList->number_of_nodes = 0;
+    pList->number_of_nodes = -1;
     pList->check_if_at_head = false;
     pList->check_if_at_tail = false;
     HeadList_Push(pList); 

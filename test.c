@@ -154,7 +154,7 @@ static void providedTestsTestSuite() {
         printf("********************************\n\n");
     }
     List_free(pList1, complexTestFreeFn);
-    // List_free(pList2, complexTestFreeFn);
+    List_free(pList2, complexTestFreeFn);
 }
 
 /*  

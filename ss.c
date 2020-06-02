@@ -112,7 +112,6 @@ static void sampleTest()
     List_free(pList, complexTestFreeFn);
     CHECK(complexTestFreeCounter == 2);
 
-
     // Concat
     int one = 1;
     int two = 2;
@@ -152,6 +151,8 @@ static void sampleTest()
     }
 	errors = 0;
     List_free(pList1, complexTestFreeFn);
+    List_free(pList, complexTestFreeFn);
+
 }
 
 	// printf("Hello World!\n");
@@ -234,7 +235,7 @@ static void capacity()
 	List_concat(l1, l9);
 	List_concat(l1, l10);
 	CHECK(List_count(l1) == 100);
-	CHECK(List_count(l10) == -1);
+	CHECK(List_count(l10) == 0);
 	List_free(l2, complexTestFreeFn);
 
 	int hundred = 100;
@@ -254,7 +255,7 @@ static void capacity()
 
     List_free(l1, complexTestFreeFn);
     List_free(l2, complexTestFreeFn);
-    List_free(l1, complexTestFreeFn);
+    CHECK(List_add(l2, getArr(1)) == -1);
 	List_free(l3, complexTestFreeFn);
 	List_free(l4, complexTestFreeFn);
 	List_free(l5, complexTestFreeFn);
@@ -283,17 +284,34 @@ static void capacity()
 static void fre() {
     int a = 5;
 	List* l1 = List_create();
-    List_append(l1, &a);
-
+	CHECK(l1 != NULL);
+	List* l2 = List_create();
+	CHECK(l2 != NULL);
+	List* l3 = List_create();
+	CHECK(l3 != NULL);
+	List* l4 = List_create();
+	CHECK(l4 != NULL);
+	List* l5 = List_create();
+    
+    for (int i = 0; i < 10; i ++) {
+		List_append(l1, getArr(i));
+		List_append(l2, getArr(i+10));
+		List_append(l3, getArr(i+20));
+		List_append(l4, getArr(i+30));
+		List_append(l5, getArr(i+40));
+	}
     List_free(l1, complexTestFreeFn);
-    List_free(l1, complexTestFreeFn);
-
+    List_free(l2, complexTestFreeFn);
+    List_free(l3, complexTestFreeFn);
+    List_free(l4, complexTestFreeFn);
+    List_free(l5, complexTestFreeFn);
+    List_free(l2, complexTestFreeFn);
 }
 
 int main()
 {
-	sampleTest();
-	capacity();
+	// sampleTest();
+	// capacity();
     fre();
 	if (passed) {
         // We got here?!? PASSED!
