@@ -1,3 +1,9 @@
+/**
+ * list.h for Assignment 1, CMPT 300 Summer 2020
+ * Name: Devansh Chopra
+ * Student #: 301-275-491
+ */
+
 // List data type
 // You may modify this file as needed; however,
 // you may *NOT* modify the function prototypes or constant names.
