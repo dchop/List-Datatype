@@ -1,6 +1,7 @@
 CFLAGS = -g -W -Wall -Wpedantic
 SRC = $(wildcard $(SRCDIR)/*.c)
 TEST = $(wildcard $(TESTSDIR)/test1.c)
+INC = -I include
 BIN = bin/output
 
 all: clean build
@@ -10,10 +11,10 @@ build: list.o test1.o
 	gcc $(CFLAGS) list.o test1.o -o $(BIN)
 
 test1.o: $(TEST)
-	gcc -c $(CFLAGS) $(TEST)
+	gcc -c $(CFLAGS) $(INC) $(TEST)
 
 list.o: $(SRC)
-	gcc -c $(CFLAGS) $(SRC)
+	gcc -c $(CFLAGS) $(INC) $(SRC)
 
 clean:
 	rm -f *.o* *.out* $(BIN)

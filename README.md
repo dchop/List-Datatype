@@ -6,7 +6,7 @@ Implementation of the List abstract data type with 100 list nodes and 10 list he
 # Clean and build executable
 $ make
 # Run the executable
-$ ./output
+$ ./bin/output
 List Abstract Data type
 ```
 
