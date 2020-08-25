@@ -1,20 +1,25 @@
-output: list.o sampleTest.o
-	gcc -g -W -Wall -Wpedantic list.o sampleTest.o -o output
-list: list.o test.o
-	gcc -g -W -Wall -Wpedantic list.o test.o -o output
-myTest: list.o myTest.o
-	gcc -g -W -Wall -Wpedantic list.o myTest.o -o output
-timTest: list.o timTest.o
-	gcc -g -W -Wall -Wpedantic list.o timTest.o -o output
-sampleTest.o: sampleTest.c
-	gcc -c -g -W -Wall -Wpedantic sampleTest.c
-myTest.o: myTest.c
-	gcc -c -g -W -Wall -Wpedantic myTest.c
-test.o: test.c
-	gcc -c -g -W -Wall -Wpedantic test.c
-list.o: list.c
-	gcc -c -g -W -Wall -Wpedantic list.c
-timTest.o: timTest.c
-	gcc -c -g -W -Wall -Wpedantic timTest.c
+CFLAGS = -g -W -Wall -Wpedantic
+SRC = $(wildcard $(SRCDIR)/*.c)
+TEST = $(wildcard $(TESTSDIR)/test1.c)
+BIN = bin/output
+
+all: clean build
+
+build: list.o test1.o
+	@mkdir -p bin
+	gcc $(CFLAGS) list.o test1.o -o $(BIN)
+
+test1.o: $(TEST)
+	gcc -c $(CFLAGS) $(TEST)
+
+list.o: $(SRC)
+	gcc -c $(CFLAGS) $(SRC)
+
 clean:
-	rm -f *.o* output test
+	rm -f *.o* *.out* $(BIN)
+
+mem: clean build mem-check
+
+mem-check:
+	@mkdir -p bin 
+	valgrind --leak-check=full ./$(BIN)
