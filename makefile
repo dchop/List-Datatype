@@ -1,6 +1,6 @@
 CFLAGS = -g -W -Wall -Wpedantic
-SRC = $(wildcard $(SRCDIR)/*.c)
-TEST = $(wildcard $(TESTSDIR)/test1.c)
+SRC = ./src/list.c
+TEST = ./tests/test1.c
 INC = -I include
 BIN = bin/output
 
